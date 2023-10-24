@@ -1,5 +1,6 @@
 #include <tokenize_all.h>
 #include <stdio.h>
+#include <string.h>
 
 /* Convert the input string to an array of tokens where each token is one of:
  * (, ), <, >, ;, |, "somestuffintquotes 898|>(", somegroupofnonsp3cialcharacters
@@ -27,11 +28,13 @@ char** tokenize(char* inputString) {
 }
 
 int main(int argc, char **argv) {
-  char* inputString = argv[1];
+  char* inputString = "";
+  for (int i = 1; i < argc; i++) {
+    strcpy(inputString, argv[i]);
+  }
   char** tokens = tokenize(inputString);
   int i = 0;
   while (tokens[i] != null) {
     fprintf("%s\n", tokens[i]);
   }
-
 }
