@@ -3,6 +3,15 @@
 #include <string.h>
 #include <stdlib.h>
 
+
+//check if the pointer is NULL and if it is log the error and exit
+void checkMalloc(void* ptr) {
+  if (ptr == NULL) {
+    fprintf(stderr, "Memory allocation failed. Exiting...\n"); 
+    exit(1);
+  }
+}
+
 /* Convert the input string to an array of tokens where each token is one of:
  * (, ), <, >, ;, |, "somestuffintquotes 898|>(", somegroupofnonsp3cialcharacters
  * Allocates memory for an array of 256 strings and allocates memory to hold each token
@@ -10,6 +19,7 @@
 char** tokenize(char* inputString) {
   //allocate memory for array of up to 256 tokens of up to 256 bytes each
   char** output = calloc(256, sizeof(char*));
+  checkMalloc(output);
   int charNum = 0;
   int tokenNum = 0;
   //iterate through the string adding each token to the output
@@ -37,6 +47,7 @@ char** tokenize(char* inputString) {
     }
     int j = 0;
     output[tokenNum] = calloc(strlen(buf) + 1, sizeof(char));
+    checkMalloc(output[tokenNum]);
     while (buf[j] != '\0') {
       output[tokenNum][j] = buf[j];
       ++j;
@@ -50,6 +61,7 @@ char** tokenize(char* inputString) {
 char** getInputTokens() {
   //get up to 256 characters of input from stdin
   char* inputString = calloc(256, sizeof(char));
+  checkMalloc(inputString);
   fgets(inputString, 256, stdin);
   //remove trailing newline from gets
   inputString[strcspn(inputString, "\r\n")] = 0;
@@ -64,8 +76,7 @@ int main(int argc, char **argv) {
   //print each token on a new line and then free the token
   int i = 0;
   while (tokens[i] != NULL) {
-    if (i > 0) { puts("");}
-    printf("%s", tokens[i]);
+    printf("%s\n", tokens[i]);
     free(tokens[i]);
     ++i;
   }
