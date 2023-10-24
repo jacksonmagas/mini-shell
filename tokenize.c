@@ -5,14 +5,11 @@
 
 /* Convert the input string to an array of tokens where each token is one of:
  * (, ), <, >, ;, |, "somestuffintquotes 898|>(", somegroupofnonsp3cialcharacters
- * Allocates memory for 256 strings of length 256, it is the responsability of callers of tokenize to free the memory.
+ * Allocates memory for an array of 256 strings and allocates memory to hold each token
  */
 char** tokenize(char* inputString) {
   //allocate memory for array of up to 256 tokens of up to 256 bytes each
   char** output = calloc(256, sizeof(char*));
-  for (int i = 0; i < 256; i++) {
-    output[i] = calloc(256, sizeof(char));
-  }
   int charNum = 0;
   int tokenNum = 0;
   //iterate through the string adding each token to the output
@@ -39,14 +36,14 @@ char** tokenize(char* inputString) {
       continue;
     }
     int j = 0;
+    output[tokenNum] = calloc(strlen(buf) + 1, sizeof(char));
     while (buf[j] != '\0') {
       output[tokenNum][j] = buf[j];
       ++j;
     }
-    output[tokenNum][j+1] = '\0';
     ++tokenNum;
   }
-  output[tokenNum+1] = NULL;
+  output[tokenNum + 1] = NULL;
   return output;
 }
 
@@ -60,16 +57,13 @@ int main(int argc, char **argv) {
   
   //tokenize string
   char** tokens = tokenize(inputString);
-  //print each token on a new line
+  //print each token on a new line and then free the token
   int i = 0;
   while (tokens[i] != NULL) {
     if (i > 0) { puts("");}
     printf("%s", tokens[i]);
+    free(tokens[i]);
     ++i;
-  }
-  //free all memory
-  for (int j = 0; j < 256; j++) {
-    free(tokens[j]);
   }
   free(tokens);
   free(inputString);
