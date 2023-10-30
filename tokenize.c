@@ -68,6 +68,7 @@ char** getInputTokens() {
 
   //tokenize string
   char** tokens = tokenize(inputString);
+  free(inputString);
   return tokens;
 }
 
@@ -81,6 +82,5 @@ int main(int argc, char **argv) {
     ++i;
   }
   free(tokens);
-  free(inputString);
   printf("\n");
 }
