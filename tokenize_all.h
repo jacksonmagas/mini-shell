@@ -14,4 +14,13 @@ int read_nonspecial_string(char* input, char* output);
 //(, ), <, >, ;, |
 int is_special_character(char input);
 
+/* Convert the input string to an array of tokens where each token is one of:
+ * (, ), <, >, ;, |, "somestuffintquotes 898|>(", somegroupofnonsp3cialcharacters
+ * Allocates memory for an array of 256 strings and allocates memory to hold each token
+ */
+char** tokenize(char* inputString);
+
+char** getInputTokens();
+
+
 #endif /*#ifndef _TOKENIZER_H */
