@@ -14,7 +14,7 @@ int is_special_character(char ch) {
 // Function for reading words
 int read_nonspecial_string(const char *input, char *output) {
   int i = 0;
-  // while we have input and the character is a digit,
+  // while we have input and the character is not a space or special character
   while (input[i] != '\0' && input[i] != ' ' && (! is_special_character(input[i]))) {
     output[i] = input[i]; // copy character to output buffer
     ++i;
@@ -27,7 +27,7 @@ int read_nonspecial_string(const char *input, char *output) {
 // Function for reading words
 int read_quote_string(const char *input, char *output) {
   int i = 0;
-  // while we have input and the character is a digit,
+  // while we have input and the input is not the end quote
   while (input[i] != '\0' && input[i] != '"') {
     output[i] = input[i]; // copy character to output buffer
     ++i;
