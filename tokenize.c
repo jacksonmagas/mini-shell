@@ -47,16 +47,20 @@ char** tokenize(char* inputString) {
   return output;
 }
 
-
-int main(int argc, char **argv) {
+char** getInputTokens() {
   //get up to 256 characters of input from stdin
   char* inputString = calloc(256, sizeof(char));
   fgets(inputString, 256, stdin);
   //remove trailing newline from gets
   inputString[strcspn(inputString, "\r\n")] = 0;
-  
+
   //tokenize string
   char** tokens = tokenize(inputString);
+  return tokens;
+}
+
+int main(int argc, char **argv) {
+  char** tokens = getInputTokens();
   //print each token on a new line and then free the token
   int i = 0;
   while (tokens[i] != NULL) {
