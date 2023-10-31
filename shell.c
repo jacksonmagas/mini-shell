@@ -5,6 +5,16 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+//gets the number of elements in a null terminated string array
+int getNumElements(char** arr) {
+  int numElements = 0;
+  while (arr[numElements] != NULL) {
+    numElements++;
+  }
+
+  return numElements;
+}
+
 int main(int argc, char **argv) {
   
   // Prints welcome message
@@ -19,11 +29,11 @@ int main(int argc, char **argv) {
     char* src = calloc(256, sizeof(char));
 
     // Processes the tokens as arguments
-    for (int i = 0; i <= sizeof(input); i++) {
+    for (int i = 0; i <= getNumElements(input); i++) {
       if (i == 0) {
         strcpy(src, input[0]);
         myargv[0] = src;
-      } else if (i == sizeof(input)) {
+      } else if (i == getNumElements(input)) {
         myargv[i] = NULL;
       } else {
         myargv[i] = input[i];
