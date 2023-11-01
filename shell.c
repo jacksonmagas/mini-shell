@@ -1,5 +1,4 @@
 #define _GNU_SOURCE
-#include <shell.h>
 #include <tokenize_all.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,14 +6,14 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <builtins.h>
+#include <shell.h>
 
 #define HELP_MESSAGE "Mini-shell supports 4 built-in commands.\nThe first command is cd \"path\" which sets the current working directory to the driectory specified by path.\nThe next command is source \"filename\" which executes each line of the given file as if it were a shell command.\n The fourth command is prev which prints the previous command and executes it again.\nThe final supported command is help, which prints this message."
 
 #define MAX_NUM_TOKENS 16
 
 //Globals:
-char** prev;
+char* prev[MAX_NUM_TOKENS];
 
 //gets the number of elements in a null terminated string array
 int getNumElements(char** arr) {
@@ -61,7 +60,9 @@ void runArgs(char* myargv[MAX_NUM_TOKENS], char* src, char* filename) {
   }
 
   if (strcmp(command, "prev") != 0) {
-    prev = myargv;
+    for (int i = 0; i < getNumElements(myargv); i++) {
+      strcpy(prev[i], myargv[i]);
+    }
   }
 }
 
@@ -130,10 +131,13 @@ void parseInput(char** input) {
 }
 
 int main(int argc, char **argv) {
-  //set initial previous command
-  prev = calloc(MAX_NUM_TOKENS, sizeof(char*));
-  prev = tokenize("echo no previous command");
-
+  for (int i = 0; i < MAX_NUM_TOKENS; i++) {
+    prev[i] = calloc(256, sizeof(char*));
+  }
+  strcpy(prev[0], "echo");
+  strcpy(prev[1], "no");
+  strcpy(prev[2], "previous");
+  strcpy(prev[3], "command");
   // Prints welcome message
   printf("Welcome to mini-shell.\nshell $ ");
   
@@ -160,6 +164,8 @@ int main(int argc, char **argv) {
   }
   printf("Bye bye.\n");
   
-  free(prev);
+  for (int i = 0; i < MAX_NUM_TOKENS; i++) {
+    free(prev[i]);
+  }
   return 0;
 }
