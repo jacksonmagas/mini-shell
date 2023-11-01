@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <builtins.h>
 
 //gets the number of elements in a null terminated string array
 int getNumElements(char** arr) {
@@ -23,7 +24,7 @@ void runArgs(char* myargv[16], char* src, char* filename) {
       int file_desc = open(filename, O_WRONLY | O_APPEND | O_TRUNC | O_CREAT, 0644);
       dup2(file_desc, 1);
     }
-    execvp(myargv[0], myargv);
+    execWithBuiltIns(myargv[0], myargv);
     strcat(src, ": command not found\n");
     printf("%s", src);
     exit(1);
