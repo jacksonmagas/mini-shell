@@ -50,25 +50,13 @@ void getFileInput(char** input, int i, char** myargv) {
   if (bytes_read != -1) {
     myargv[i] = buffer;
   }
-  //char fileInputString[256] = "";
-  //char s[256];
-  //while (fgets(s, 256, file) != NULL) {
-    //strcat(fileInputString, s);
-  //}
-  //myargv[i] = fileInputString;
-  //char** fileInput = getInputTokens(fileInputString);
-  //for (int j = 0; j <= getNumElements(fileInput); j++) {
-    //if (j == getNumElements(fileInput)) {
-      //myargv[j + i] = NULL;
-    //}
-    //myargv[j + i] = fileInput[j];
-  //}
 }
 
 void parseInput(char** input) {
   char** myargv = calloc(256, sizeof(char*));
   char* src = calloc(256, sizeof(char));
   char** newInput = calloc(256, sizeof(char*));
+  char* filename = "";
   // Processes the tokens as arguments
   for (int i = 0; i <= getNumElements(input); i++) {
     if (i == 0) {
@@ -76,30 +64,23 @@ void parseInput(char** input) {
       myargv[0] = src;
     } else if (i == getNumElements(input)) {
       myargv[i] = NULL;
-      runArgs(myargv, src, "");
+      runArgs(myargv, src, filename);
     } else if (strcmp(input[i], ";") == 0) {
       myargv[i] = NULL;
-      runArgs(myargv, src, "");
+      runArgs(myargv, src, filename);
       if (i < getNumElements(input) - 1) {
         nextArgs(input, newInput, i, 1);
         parseInput(newInput);	
       }
       break;
     } else if (strcmp(input[i], ">") == 0) {
-      myargv[i] = NULL;
-      if (i < getNumElements(input) - 1) {
-        runArgs(myargv, src, input[i + 1]);
-      }
-      if (i < getNumElements(input) - 3 && strcmp(input[i + 2], ";") == 0) {
-        nextArgs(input, newInput, i, 3);
-	parseInput(newInput);
-      }
-      break;
+      filename = input[i + 1];
+      i++;
     } else if (strcmp(input[i], "<") == 0) {
       if (i < getNumElements(input) - 1) {
         getFileInput(input, i, myargv);
         myargv[i + 1] = NULL;	
-	runArgs(myargv, src, "");
+	runArgs(myargv, src, filename);
       }
       if (i < getNumElements(input) - 3 && strcmp(input[i + 2], ";") == 0) {
         nextArgs(input, newInput, i, 3);
