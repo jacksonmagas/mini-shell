@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#include <shell.h>
 #include <tokenize_all.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,6 +8,13 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <builtins.h>
+
+#define HELP_MESSAGE "Mini-shell supports 4 built-in commands.\nThe first command is cd \"path\" which sets the current working directory to the driectory specified by path.\nThe next command is source \"filename\" which executes each line of the given file as if it were a shell command.\n The fourth command is prev which prints the previous command and executes it again.\nThe final supported command is help, which prints this message."
+
+#define MAX_NUM_TOKENS 16
+
+//Globals:
+char** prev;
 
 //gets the number of elements in a null terminated string array
 int getNumElements(char** arr) {
@@ -18,19 +26,42 @@ int getNumElements(char** arr) {
   return numElements;
 }
 
-void runArgs(char* myargv[16], char* src, char* filename) {
+void handleGeneralCase(char* myargv[MAX_NUM_TOKENS], char* src, char* filename) {
   if (fork() == 0) {
     if (strcmp(filename, "") != 0) {
       int file_desc = open(filename, O_WRONLY | O_APPEND | O_TRUNC | O_CREAT, 0644);
       dup2(file_desc, 1);
     }
-    execWithBuiltIns(myargv[0], myargv);
+    execvp(myargv[0], myargv);
     strcat(src, ": command not found\n");
     printf("%s", src);
     exit(1);
   }
   else {
     wait(NULL);
+  }
+}
+
+void runArgs(char* myargv[MAX_NUM_TOKENS], char* src, char* filename) {
+  char* command = myargv[0];
+  if (strcmp(command, "cd") == 0) {
+    chdir(myargv[1]);
+  } else if (strcmp(command, "source") == 0) {
+    FILE *fptr = fopen(myargv[1], "r");
+    char cmds[256];
+    while (fgets(cmds, 256, fptr)) {
+      parseInput(tokenize(cmds));
+    }
+  } else if (strcmp(command, "prev") == 0) {
+    parseInput(prev);
+  } else if (strcmp(command, "help") == 0) {
+    printf("%s", HELP_MESSAGE);
+  } else {
+    handleGeneralCase(myargv, src, filename);
+  }
+
+  if (strcmp(command, "prev") != 0) {
+    prev = myargv;
   }
 }
 
@@ -99,7 +130,10 @@ void parseInput(char** input) {
 }
 
 int main(int argc, char **argv) {
-  
+  //set initial previous command
+  prev = calloc(MAX_NUM_TOKENS, sizeof(char*));
+  prev = tokenize("echo no previous command");
+
   // Prints welcome message
   printf("Welcome to mini-shell.\nshell $ ");
   
@@ -126,6 +160,6 @@ int main(int argc, char **argv) {
   }
   printf("Bye bye.\n");
   
-
+  free(prev);
   return 0;
 }
