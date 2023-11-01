@@ -16,10 +16,12 @@ int getNumElements(char** arr) {
   return numElements;
 }
 
-void runArgs(char* myargv[16], char* src) {
+void runArgs(char* myargv[16], char* src, char* filename) {
   if (fork() == 0) {
-    //int file_desc = open("out.txt", O_WRONLY | O_APPEND | O_TRUNC | O_CREAT, 0644);
-    //dup2(file_desc, 1) ;
+    if (strcmp(filename, "") != 0) {
+      int file_desc = open(filename, O_WRONLY | O_APPEND | O_TRUNC | O_CREAT, 0644);
+      dup2(file_desc, 1);
+    }
     execvp(myargv[0], myargv);
     strcat(src, ": command not found\n");
     printf("%s", src);
@@ -27,6 +29,14 @@ void runArgs(char* myargv[16], char* src) {
   }
   else {
     wait(NULL);
+  }
+}
+
+void nextArgs(char** input, char** newInput, int i, int jump) {
+  int n = 0;
+  for (int j = i + jump; j < getNumElements(input); j++) {
+    newInput[n] = input[j];
+    n++;
   }
 }
 
@@ -41,18 +51,28 @@ void parseInput(char** input) {
       myargv[0] = src;
     } else if (i == getNumElements(input)) {
       myargv[i] = NULL;
-      runArgs(myargv, src);
+      runArgs(myargv, src, "");
     } else if (strcmp(input[i], ";") == 0) {
       myargv[i] = NULL;
-      runArgs(myargv, src);
-      if (i != getNumElements(input) - 1) {
-        int n = 0;
-        for (int j = i + 1; j < getNumElements(input); j++) {
-          newInput[n] = input[j];
-          n++;
-        }
-        parseInput(newInput);
+      runArgs(myargv, src, "");
+      if (i < getNumElements(input) - 1) {
+        nextArgs(input, newInput, i, 1);
+        parseInput(newInput);	
       }
+      break;
+    } else if (strcmp(input[i], ">") == 0) {
+      myargv[i] = NULL;
+      if (i < getNumElements(input) - 1) {
+        runArgs(myargv, src, input[i + 1]);
+      }
+      if (i < getNumElements(input) - 3 && strcmp(input[i + 2], ";") == 0) {
+        nextArgs(input, newInput, i, 3);
+	parseInput(newInput);
+      }
+      break;
+    } else if (strcmp(input[i], "<") == 0) {
+      break;
+    } else if (strcmp(input[i], "|") == 0) {
       break;
     } else {
       myargv[i] = input[i];
