@@ -97,9 +97,10 @@ char** getInputTokens() {
   char* inputString = calloc(256, sizeof(char));
   checkMalloc(inputString);
   fgets(inputString, 256, stdin);
-  //remove trailing newline from gets
-  inputString[strcspn(inputString, "\r\n")] = 0;
-
+  if (strcmp(inputString, "\n") != 0) {
+    //remove trailing newline from gets
+    inputString[strcspn(inputString, "\r\n")] = 0;
+  }
   //tokenize string
   char** tokens = tokenize(inputString);
   free(inputString);
