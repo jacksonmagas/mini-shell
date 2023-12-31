@@ -1,16 +1,9 @@
 # Project 1: Shell
 
-This is the starter code for [Project 1](https://khoury-cs3650.github.io/p1.html).
+This repository was the first project for my computer systems class, a shell written in c using system calls.
 
-The [Makefile](Makefile) contains the following targets:
+The shell supports piping, sequencing, input and output redirection, and a few built in functions, as well as support for running external binaries such as echo or any other binary.
 
-- `make all` - compile everything
-- `make tokenize` - compile the tokenizer demo
-- `make tokenize-tests` - compile the tokenizer demo
-- `make shell` - compile the shell
-- `make shell-tests` - run a few tests against the shell
-- `make test` - compile and run all the tests
-- `make clean` - perform a minimal clean-up of the source tree
+There are two main parts to the project, the tokenizer which gets user input and splits it into lexical tokens, and the shell which takes a list of tokens and makes the correct system calls and forks and joins the required processes to execute the command.
 
-
-The [examples](examples/) directory contains an example tokenizer. It might help.
+This project was written in collaboration with Ben Aranow.
